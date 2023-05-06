@@ -48,23 +48,25 @@ class Button():
                     return True
         return False
 
-pygame.init()
-window = pygame.display.set_mode((500, 500))
-window.fill((100, 100, 255))
-clock = pygame.time.Clock()
 
-btn = Button(y=70, width=150, height=50, text='Начать игру')
+if __name__ == '__main__':
+    pygame.init()
+    window = pygame.display.set_mode((500, 500))
+    window.fill((100, 100, 255))
+    clock = pygame.time.Clock()
 
-while True:
-    events = pygame.event.get()
-    for event in events:
-        if event.type == pygame.QUIT:
-            pygame.quit()
-    
-    btn.update(events)
-    if btn.is_clicked(events):
-        print('НАЖАТО!')
-    btn.draw(window)
+    btn = Button(y=70, width=150, height=50, text='Начать игру')
 
-    clock.tick(60)
-    pygame.display.update()
+    while True:
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        
+        btn.update(events)
+        if btn.is_clicked(events):
+            print('НАЖАТО!')
+        btn.draw(window)
+
+        clock.tick(60)
+        pygame.display.update()
