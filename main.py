@@ -52,14 +52,14 @@ ball = GameSprite('tenis_ball.png', 200, 200, 4, 50, 50)
 
 font.init() 
 font = font.Font(None, 35) 
-lose1 = font.render('PLAYER 1 LOSE!', True, (180, 0, 0)) 
-lose2 = font.render('PLAYER 2 LOSE!', True, (180, 0, 0)) 
+lose1 = font.render('PLAYER 1 LOSE!', True, (160, 0, 0)) 
+lose2 = font.render('PLAYER 2 LOSE!', True, (160, 0, 0)) 
 
 
 btn_start = Button(y=150, width=150, height=40, text="начать игру", font_size=24)
 btn_credits = Button(y=210, width=150, height=40, text="об авторе", font_size=24)
 btn_exit = Button(y=270, width=150, height=40, text="выход", font_size=24)
-btn_restart = Button(y=250, width=150, height=40, text="перезапуск", font_size=24) 
+btn_restart = Button(y=220, width=150, height=40, text="перезапуск", font_size=24) 
 btn_continue = Button(y=220, width=150, height=40, text="продолжить", font_size=24)
 btn_exit_inpause = Button(y=280, width=150, height=40, text="выйти в меню", font_size=24) 
  
@@ -67,8 +67,7 @@ speed_x = 3
 speed_y = 3 
 
 def game_run():
-    global speed_x
-    global speed_y 
+    global speed_x, speed_y, stage 
     window.fill(back) 
     racket1.update_l() 
     racket2.update_r() 
@@ -86,14 +85,16 @@ def game_run():
 
 
     #если мяч улетел дальше ракетки, выводим условие проигрыша для первого игрока 
-    if ball.rect.x < 0: 
-        window.blit(lose1, (200, 200))
+    if ball.rect.x < 0:
+        stage = 'lose1' 
+        window.blit(lose1, (200, 180))
 
 
 
     #если мяч улетел дальше ракетки, выводим условие проигрыша для второго игрока 
-    if ball.rect.x > win_width: 
-        window.blit(lose2, (200, 200)) 
+    if ball.rect.x > win_width:
+        stage = 'lose2' 
+        window.blit(lose2, (200, 180)) 
 
 
     racket1.reset() 
@@ -134,7 +135,31 @@ def pause(events):
         stage = 'menu'
     if btn_continue.is_clicked(events):
         stage = 'game'
-    
+
+def restart_game():
+    global racket1, racket2, ball
+    racket1 = Player('racket.png', 30, 200, 4, 50, 150)  
+    racket2 = Player('racket.png', 520, 200, 4, 50, 150) 
+    ball = GameSprite('tenis_ball.png', 200, 200, 4, 50, 50)
+
+def endgame(events):
+    global stage
+
+    #window.fill(back)
+
+    btn_exit_inpause.update(events)
+    btn_restart.update(events)
+
+    btn_exit_inpause.draw(window)
+    btn_restart.draw(window)
+
+    if btn_exit_inpause.is_clicked(events):
+        stage = 'menu'
+        restart_game()
+    if btn_restart.is_clicked(events):
+        stage = 'game'
+        restart_game()
+
 while stage != 'off':
     events = event.get() 
     for e in events: 
@@ -150,6 +175,8 @@ while stage != 'off':
         game_run()
     if stage == 'pause':
         pause(events)
+    if 'lose' in stage:
+        endgame(events)
 
     display.update() 
     clock.tick(FPS)
